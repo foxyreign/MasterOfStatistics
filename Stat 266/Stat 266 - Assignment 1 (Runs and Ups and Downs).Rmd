@@ -1,0 +1,38 @@
+---
+title: "Stat 266 - Runs of Ups and Downs, and Trend"
+author: "Adrian Cuyugan"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, echo=FALSE, warning=FALSE, cache=TRUE, fig.cap='Run Chart', fig.height=4, fig.width=10, fig.align='center'}
+require (randtests)
+require(ggplot2)
+require(knitr)
+require(gridExtra)
+
+assign1 <- read.csv('C://Users//acuyugan//Dropbox//MasterOfStatistics//Stat 266//Stat 266 - Assignment 1 (Runs and Ups and Downs).csv', head = T, sep = ',')
+assign1$Date <- as.Date(assign1$Date, format = '%Y-%m-%d')
+#assign1$Subset <- ifelse(assign1$Date < '2015-03-13', 'Exact Test', 'Normal Approx')
+mttr.range <- range(assign1$MTTR)
+assign1 <- assign1[,-2]
+assign1$Rank <- rank(assign1$MTTR)
+Rank.Difference <- diff(assign1$Rank)
+rank.difference.list <- as.data.frame.integer(NaN)
+rank.difference.list <- rbind(Rank.Difference)
+kable(assign1, format = 'markdown', caption = 'Data set', align = 'c')
+
+#bartels.rank.test(assign1$MTTR, alternative = 'left.sided', pvalue = 'normal')
+#bartels.rank.test(assign1[1:10,3], alternative = 'left.sided', pvalue = 'exact')
+
+plot1 <- ggplot(assign1, aes(x = Date, y = MTTR)) + 
+  geom_line() + geom_point(size = 3) + 
+  theme_minimal() + ggtitle('n = 22')
+plot2 <- ggplot(assign1[1:10,], aes(x = Date, y = MTTR)) +
+  geom_line() + geom_point(size = 3) + 
+  theme_minimal() + ggtitle('n = 10')
+grid.arrange(plot1, plot2, ncol = 2)
+```

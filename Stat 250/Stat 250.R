@@ -22,11 +22,11 @@ requiredPackages <- c('data.table', # reading text files into a table dataframe
 LoadLibrary_v2(requiredPackages)
 
 # Load datasets
-agpop <- getURL("https://raw.github.com/aronlindberg/latent_growth_classes/master/LGC_data.csv")
+agpop <- getURL("https://raw.githubusercontent.com/foxyreign/MasterOfStatistics/master/Stat%20250/agpop.dat")
 agpop <- read.csv(text = agpop)
-agsrs <- getURL("https://raw.github.com/aronlindberg/latent_growth_classes/master/LGC_data.csv")
+agsrs <- getURL("https://raw.githubusercontent.com/foxyreign/MasterOfStatistics/master/Stat%20250/agsrs.dat")
 agsrs <- read.csv(text = agsrs)
-agstrat <- getURL("https://raw.github.com/aronlindberg/latent_growth_classes/master/LGC_data.csv")
+agstrat <- getURL("https://raw.githubusercontent.com/foxyreign/MasterOfStatistics/master/Stat%20250/agstrat.dat")
 agstrat <- read.csv(text = agstrat)
 
 # Load these when internet is not available

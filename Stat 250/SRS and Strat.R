@@ -6,7 +6,7 @@ agpop <- read.csv('agpop.dat', head = T, sep = ',')
 
 ## 2. Create a dartaframe in R from the dataset in (1) without any missing value for ACRES92.
 agpop <- subset(agpop, ACRES92 != -99)   			# Invalid cases
-agpop <- agpop.complete[!is.na(agpop $ACRES92),]	# Remove NAs 
+agpop <- agpop[!is.na(agpop $ACRES92),]	# Remove NAs 
 
 ## 3. Create four (4) additional dataframes for each of the regions.
 agpop_ne <- subset(agpop, REGION == 'NE')
@@ -18,7 +18,7 @@ agpop_w <- subset(agpop, REGION == 'W')
 set.seed(91450)
 
 ## 5. Obtain an SRS of size 300 freom the dataframe in (2).
-agpop.srs <- agpop[sample(nrow(agpop.complete), size = 300),]
+agpop.srs <- agpop[sample(nrow(agpop), size = 300),]
 
 ## 6. Obtain an estimate of the population mean using eqn (2.8).
 # For estimating the population mean y_bar from an SRS, use the sample mean.
@@ -26,21 +26,21 @@ srs.mean <- mean(agpop.srs$ACRES92); print(srs.mean)
 
 # Variance estimation of SRS: (1-n/N) * (s^2/n)
 fpc <- (1-nrow(agpop.srs)/nrow(agpop))
-var.srs <- fpc * (sd(agpop.srs$ACRES92)/nrow(agpop.srs))
-print(var.srs)
+srs.var <- fpc * (sd(agpop.srs$ACRES92)/nrow(agpop.srs)); print(srs.var)
 
 ## 7. Obtain a 95% CI for the population mean using equations (2.12) and (2.22)
 # y_bar - t_(alpha/2,n-1)*(sqrt(fpc)*(var/sqrt(n)); y_bar + t_(alpha/2,n-1)*(sqrt(fpc)*(var/sqrt(n))
 
-se.srs <- sqrt(var.srs)				# Compute standard error
-t.low_95 <- qt(.025, df = 299, lower.tail = F)			# Compute t 95%, n-1	
-t.up_95 <- qt(.025, df = 299, lower.tail = F)	# Compute t 95%, n-1
+se.srs <- sqrt(srs.var)	                            # Compute standard error
+t.95_n299 <- qt(.025, df = 299, lower.tail = F)			# Compute t 95%, n-1	
 
-srs.low <- (srs.mean - t.low_95 * sqrt(fpc)) * (sqrt(var.srs)/sqrt(nrow(agpop.srs)))
-srs.up <- (srs.mean + t.up_95 * sqrt(fpc)) * (sqrt(var.srs)/sqrt(nrow(agpop.srs)))
+srs.ci_low <- srs.mean - t.95_n299 * sqrt(fpc) * sqrt(var.srs)/sqrt(nrow(agpop.srs))
+srs.ci_up <- srs.mean + t.95_n299 * sqrt(fpc) * sqrt(var.srs)/sqrt(nrow(agpop.srs))
 
-308709 - 1.96 * sqrt(1-300/3059) * sqrt(var.srs)/sqrt(300)
-308709 + 1.96 * sqrt(1-300/3059) * sqrt(var.srs)/sqrt(300)
+list(mean = srs.mean, 
+     variance = srs.var, 
+     ci95_low = srs.ci_low, 
+     ci95_up = srs.ci_up)
 
 ## 8. Obtain a stratified sample of size 300 from the dataframes from (3) allocated
 ## according to the sizes mentioned in page 75 (Lohr).

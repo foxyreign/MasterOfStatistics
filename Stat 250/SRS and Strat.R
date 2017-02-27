@@ -5,8 +5,13 @@ setwd('D://Stat 250//')
 agpop <- read.csv('agpop.dat', head = T, sep = ',')
 
 ## 2. Create a dartaframe in R from the dataset in (1) without any missing value for ACRES92.
+<<<<<<< HEAD
 agpop <- subset(agpop, ACRES92 != -99)   			# Invalid cases or < 0
 agpop <- agpop[!is.na(agpop $ACRES92),]	      # Remove NAs 
+=======
+agpop <- subset(agpop, ACRES92 != -99)   			# Invalid cases
+agpop <- agpop[!is.na(agpop $ACRES92),]	# Remove NAs 
+>>>>>>> 3500e07c84b33d4df354895f5f596ef6a6ee0f5c
 
 ## 3. Create four (4) additional dataframes for each of the regions.
 agpop_ne <- subset(agpop, REGION == 'NE')

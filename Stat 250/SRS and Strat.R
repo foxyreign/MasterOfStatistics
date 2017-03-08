@@ -5,7 +5,6 @@ setwd('D://Stat 250//')
 agpop <- read.csv('agpop.dat', head = T, sep = ',')
 
 ## 2. Create a dartaframe in R from the dataset in (1) without any missing value for ACRES92.
-
 agpop <- subset(agpop, ACRES92 != -99)   			# Invalid cases or < 0
 agpop <- agpop[!is.na(agpop $ACRES92),]	      # Remove NAs 
 
@@ -35,11 +34,8 @@ srs.var <- fpc * (sd(agpop.srs$ACRES92)/nrow(agpop.srs)); print(srs.var)
 se.srs <- sqrt(srs.var)	                            # Compute standard error
 t.95_n299 <- qt(.025, df = 299, lower.tail = F)			# Compute t 95%, n-1	
 
-srs.ci_low <- srs.mean - t.95_n299 * sqrt(fpc) * sqrt(var.srs)/sqrt(nrow(agpop.srs))
-srs.ci_up <- srs.mean + t.95_n299 * sqrt(fpc) * sqrt(var.srs)/sqrt(nrow(agpop.srs))
-
-list(y_bar.estimates = c(mean = srs.mean, variance = srs.var), 
-     ci_95 = c(low = srs.ci_low, up = srs.ci_up))
+srs.ci_low <- srs.mean - t.95_n299 * sqrt(fpc) * sqrt(srs.var)/sqrt(nrow(agpop.srs))
+srs.ci_up <- srs.mean + t.95_n299 * sqrt(fpc) * sqrt(srs.var)/sqrt(nrow(agpop.srs))
 
 ## 8. Obtain a stratified sample of size 300 from the dataframes from (3) allocated
 ## according to the sizes mentioned in page 75 (Lohr).
@@ -53,7 +49,7 @@ agstrat_w <- agpop_w[sample(nrow(agpop_w), size = 41),]
 
 # Number of counties in stratum:
 northeast <- 220
-northcentral <- 1054
+northcentral <- 1052
 south <- 1382
 west <- 422
 
@@ -88,23 +84,33 @@ strat_w.var <- (1-nrow(agstrat_w)/300) * (sd(agstrat_w$ACRES92)/nrow(agstrat_w))
 ## using the percentile of the t-distribution with n-H df (n = 300, H = 4).
 
 # Compute for variance of y_bar strata
-strat_ne.ybar_var <- (1-nrow(agstrat_ne)/300) * (1-nrow(agstrat_ne)/300)^2 * (sd(agstrat_ne$ACRES92)/nrow(agstrat_ne))
-strat_nc.ybar_var <- (1-nrow(agstrat_nc)/300) * (1-nrow(agstrat_nc)/300)^2 * (sd(agstrat_nc$ACRES92)/nrow(agstrat_nc))
-strat_s.ybar_var <- (1-nrow(agstrat_s)/300) * (1-nrow(agstrat_s)/300)^2 * (sd(agstrat_s$ACRES92)/nrow(agstrat_s))
-strat_w.ybar_var <- (1-nrow(agstrat_w)/300) * (1-nrow(agstrat_w)/300)^2 * (sd(agstrat_w$ACRES92)/nrow(agstrat_w))
+strat_ne.ybar_var <- (1-nrow(agstrat_ne)/300) * (northeast/3059)^2 * (var(agstrat_ne$ACRES92)/nrow(agstrat_ne))
+strat_nc.ybar_var <- (1-nrow(agstrat_nc)/300) * (northcentral/3059)^2 * (var(agstrat_nc$ACRES92)/nrow(agstrat_nc))
+strat_s.ybar_var <- (1-nrow(agstrat_s)/300) * (south/3059)^2 * (var(agstrat_s$ACRES92)/nrow(agstrat_s))
+strat_w.ybar_var <- (1-nrow(agstrat_w)/300) * (west/3059)^2 * (var(agstrat_w$ACRES92)/nrow(agstrat_w))
 
 # Compute for variance of y_bar
-strat.ybar_var <- sqrt(strat_ne.ybar_var + strat_nc.ybar_var + strat_s.ybar_var + strat_w.ybar_var)
+strat.ybar_se <- sqrt(strat_ne.ybar_var + strat_nc.ybar_var + strat_s.ybar_var + strat_w.ybar_var)
 
 # Compute for 95% CI 
-strat.ci_low <- strat.mean - 1.96 * sqrt(fpc) * strat.ybar_var
-strat.ci_up <- strat.mean + 1.96 * sqrt(fpc) * strat.ybar_var
+strat.ci_low <- strat.mean - qt(0.025, df = 296, lower.tail = F) * sqrt(fpc) * strat.ybar_se
+strat.ci_up <- strat.mean + qt(0.025, df = 296, lower.tail = F) * sqrt(fpc) * strat.ybar_se
 
+#### Answers ####
+# 1 and 2
+list(y_bar.estimates = c(mean = srs.mean, variance = srs.var), 
+     ci_95 = c(low = srs.ci_low, up = srs.ci_up))
+
+# 3 - 5
 list(y_bar.estimates = c(mean = strat.mean, 
                          variance = strat.ybar_var),
-     strat.var = c(strat_ne.var = strat_ne.var,
-                   strat_nc.var = strat_nc.var,
-                   strat_s.var = strat_s.var,
-                   strat_w.var = strat_w.var),
+     strat.mean = c(strat_ne.mean = strat_ne.mean,
+                    strat_nc.mean = strat_nc.mean,
+                    strat_s.mean = strat_s.mean,
+                    strat_w.mean = strat_w.mean),
+     strat.var = c(strat_ne.var = strat_ne.ybar_var,
+                   strat_nc.var = strat_nc.ybar_var,
+                   strat_s.var = strat_s.ybar_var,
+                   strat_w.var = strat_w.ybar_var),
      ci_95 = c(low = strat.ci_low, 
                up = strat.ci_up))

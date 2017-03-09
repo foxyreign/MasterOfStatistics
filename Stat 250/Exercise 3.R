@@ -99,19 +99,19 @@ pop_anova
 # 5. Using:
 # a. set.seed(last 5 digits of your std no + 10), obtain a sample of size 21 from the Northeast stratum
 set.seed(91450 + 10); agpop_ne.strat <- agpop_ne[sample(nrow(agpop_ne), size = 21),]
-agpop_ne.strat_mean <- mean(agpop_ne.strat$ACRES92)
+agpop_ne.strat_mean <- (nrow(agpop_ne.strat)/300) * mean(agpop_ne.strat$ACRES92)
 
 # b. set.seed(last 5 digits of your std no + 11), obtain a sample of size 103 from the North Central stratum
 set.seed(91450 + 11); agpop_nc.strat <- agpop_nc[sample(nrow(agpop_nc), size = 103),]
-agpop_nc.strat_mean <- mean(agpop_nc.strat$ACRES92)
+agpop_nc.strat_mean <- (nrow(agpop_ne.strat)/300) * mean(agpop_nc.strat$ACRES92)
 
 # c. set.seed(last 5 digits of your std no + 12), obtain a sample of size 135 from the South stratum
 set.seed(91450 + 12); agpop_s.strat <- agpop_s[sample(nrow(agpop_s), size = 135),]
-agpop_s.strat_mean <- mean(agpop_s.strat$ACRES92)
+agpop_s.strat_mean <- (nrow(agpop_ne.strat)/300) * mean(agpop_s.strat$ACRES92)
 
 # d. set.seed(last 5 digits of your std no + 13), obtain a sample of size 41 from the South stratum
 set.seed(91450 + 13); agpop_w.strat <- agpop_w[sample(nrow(agpop_w), size = 41),]
-agpop_w.strat_mean <- mean(agpop_w.strat$ACRES92)
+agpop_w.strat_mean <- (nrow(agpop_ne.strat)/300) * mean(agpop_w.strat$ACRES92)
 
 # 6. Construct the sample ANOVA table:
 # a. using y_bar_SRS for y_bar_U

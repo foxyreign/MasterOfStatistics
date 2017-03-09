@@ -156,10 +156,10 @@ sample.srs_anova
 # b. using y_bar_strat for y_bar_U
 
 # Between strata
-sample.strat_ssb <- sum(nrow(agpop_ne.strat) * (agpop_ne.strat_mean - agpop_ne.mean)^2,
-                        nrow(agpop_nc.strat) * (agpop_nc.strat_mean - agpop_nc.mean)^2,
-                        nrow(agpop_s.strat) * (agpop_s.strat_mean - agpop_s.mean)^2,
-                        nrow(agpop_w.strat) * (agpop_w.strat_mean - agpop_w.mean)^2)
+sample.strat_ssb <- sum(nrow(agpop_ne.strat) * (agpop_ne.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_ne.mean)^2,
+                        nrow(agpop_nc.strat) * (agpop_nc.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_nc.mean)^2,
+                        nrow(agpop_s.strat) * (agpop_s.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_s.mean)^2,
+                        nrow(agpop_w.strat) * (agpop_w.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_w.mean)^2)
 sample.strat_ssb_df <- 3 # H-1
 
 # Within strata

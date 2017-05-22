@@ -1,5 +1,10 @@
-# Load CSV into environment
-survey <- read.csv('Stat 251/survey.csv', head = T, sep = ',', colClasses = rep('factor', 250))
+# Load CSV from github, install.packages('RCurl') if needed
+require(RCurl)
+survey <- getURL('https://raw.githubusercontent.com/foxyreign/MasterOfStatistics/master/Stat%20251/survey.csv')
+survey <- read.csv(text = survey)
+
+# Load CSV into environment if loading from an offline file
+# survey <- read.csv('Stat 251/survey.csv', head = T, sep = ',', colClasses = rep('factor', 250))
 
 # Set respondent as rowname
 rownames(survey) <- survey[,1]; survey <- survey[,-1]

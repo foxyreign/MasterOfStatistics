@@ -26,12 +26,13 @@ srs.mean <- mean(agpop.srs$ACRES92); print(srs.mean)
 
 # Variance estimation of SRS: (1-n/N) * (s^2/n)
 fpc <- (1-nrow(agpop.srs)/nrow(agpop))
-srs.var <- fpc * (sd(agpop.srs$ACRES92)/nrow(agpop.srs)); print(srs.var)
+srs.var <- fpc * (var(agpop.srs$ACRES92)/nrow(agpop.srs)); print(srs.var)
+srs.var.sample <- fpc * (sd(agpop.srs$ACRES92)/nrow(agpop.srs)); print(srs.var.sample)
 
 ## 7. Obtain a 95% CI for the population mean using equations (2.12) and (2.22)
 # y_bar - t_(alpha/2,n-1)*(sqrt(fpc)*(var/sqrt(n)); y_bar + t_(alpha/2,n-1)*(sqrt(fpc)*(var/sqrt(n))
 
-se.srs <- sqrt(srs.var)	                            # Compute standard error
+se.srs <- sqrt(srs.var)	                                    # Compute standard error
 t.95_n299 <- qt(.025, df = 299, lower.tail = F)			# Compute t 95%, n-1	
 
 srs.ci_low <- srs.mean - t.95_n299 * sqrt(fpc) * sqrt(srs.var)/sqrt(nrow(agpop.srs))
@@ -90,7 +91,8 @@ strat_s.ybar_var <- (1-nrow(agstrat_s)/300) * (south/3059)^2 * (var(agstrat_s$AC
 strat_w.ybar_var <- (1-nrow(agstrat_w)/300) * (west/3059)^2 * (var(agstrat_w$ACRES92)/nrow(agstrat_w))
 
 # Compute for variance of y_bar
-strat.ybar_se <- sqrt(strat_ne.ybar_var + strat_nc.ybar_var + strat_s.ybar_var + strat_w.ybar_var)
+strat.ybar_var <- strat_ne.ybar_var + strat_nc.ybar_var + strat_s.ybar_var + strat_w.ybar_var
+strat.ybar_se <- sqrt(strat.ybar_var)
 
 # Compute for 95% CI 
 strat.ci_low <- strat.mean - qt(0.025, df = 296, lower.tail = F) * sqrt(fpc) * strat.ybar_se
@@ -98,12 +100,12 @@ strat.ci_up <- strat.mean + qt(0.025, df = 296, lower.tail = F) * sqrt(fpc) * st
 
 #### Answers ####
 # 1 and 2
-list(y_bar.estimates = c(mean = srs.mean, variance = srs.var), 
+list(y_bar = c(mean = srs.mean, variance = srs.var), 
      ci_95 = c(low = srs.ci_low, up = srs.ci_up))
 
 # 3 - 5
-list(y_bar.estimates = c(mean = strat.mean, 
-                         variance = strat.ybar_var),
+list(y_bar.estimates = c(mean = strat.mean,
+                         var = strat.ybar_var),
      strat.mean = c(strat_ne.mean = strat_ne.mean,
                     strat_nc.mean = strat_nc.mean,
                     strat_s.mean = strat_s.mean,

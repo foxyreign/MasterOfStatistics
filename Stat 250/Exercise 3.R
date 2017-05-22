@@ -154,12 +154,16 @@ colnames(sample.srs_anova) <- c('df', 'SumOfSquares')
 sample.srs_anova
 
 # b. using y_bar_strat for y_bar_U
+sample.strat_mean <- sum(((nrow(agpop_ne.strat)/300) * agpop_ne.mean),
+                         ((nrow(agpop_ne.strat)/300) * agpop_nc.mean),
+                         ((nrow(agpop_ne.strat)/300) * agpop_s.mean),
+                         ((nrow(agpop_ne.strat)/300) * agpop_w.mean))
 
 # Between strata
-sample.strat_ssb <- sum(nrow(agpop_ne.strat) * (agpop_ne.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_ne.mean)^2,
-                        nrow(agpop_nc.strat) * (agpop_nc.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_nc.mean)^2,
-                        nrow(agpop_s.strat) * (agpop_s.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_s.mean)^2,
-                        nrow(agpop_w.strat) * (agpop_w.strat_mean - (nrow(agpop_ne.strat)/300) * agpop_w.mean)^2)
+sample.strat_ssb <- sum(nrow(agpop_ne.strat) * (agpop_ne.strat_mean - sample.strat_mean)^2,
+                        nrow(agpop_nc.strat) * (agpop_nc.strat_mean - sample.strat_mean)^2,
+                        nrow(agpop_s.strat) * (agpop_s.strat_mean - sample.strat_mean)^2,
+                        nrow(agpop_w.strat) * (agpop_w.strat_mean - sample.strat_mean)^2)
 sample.strat_ssb_df <- 3 # H-1
 
 # Within strata

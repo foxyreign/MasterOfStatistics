@@ -192,7 +192,7 @@ ggplot(monitor_df, aes(x = datetimestamp, y = celcius)) +
   theme(legend.position = 'bottom')
 
 
-sas#### Fixed effects model ####
+#### Fixed effects model ####
 ## ANOVA
 model <- aov(score ~ temp*time, data = df)
 Anova(model, type = "III")
@@ -233,12 +233,14 @@ ggplot(data = score_means, aes(x = temp, y = Means, col = time, group = time)) +
 #### Post-hoc tests ####
 par(mfrow = c(2,2))
 par(mar = c(3,5,6,1))
+
 plot(scheffe, main = "Scheffe's Test")
 plot(tukey, main = 'Tukey HSD Test')
 plot(duncan, main = "Duncan's New Multiple Range Test")
 plot(lsd, main = "Fisher's LSD Test")
 mtext("Sensory Score Mean Differences Between Water Temperature and Brewing Time", 
       side = 3, line = -1.2, outer = T)
+
 par(mfrow = c(1,1))
 
 # Scheffe's test

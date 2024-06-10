@@ -2,12 +2,14 @@
 title: "Sensory Study of Cold Brew Arabica Coffee Based on Brewing Time and Water Temperature"
 author: "Adrian Cuyugan"
 date: "2024-06-12"
-output: 
-  html_document: 
+output:
+  pdf_document: default
+  html_document:
     fig_width: 8.5
     fig_height: 6
     fig_caption: true
     df_print: default
+  word_document: default
 ---
 
 ```{r knitr, include = FALSE}
@@ -34,7 +36,6 @@ library(dplyr)        # Data preparation
 library(data.table)   # Data preparation
 library(gridExtra)    # Side by side plots
 library(agricolae)    # Post-hoc tests
-library(car)          # ANOVA
 library(corrplot)     # Correlation plot
 ```
 
@@ -167,7 +168,7 @@ describeBy(x = df, group = df$time, digits = 2)
 ### Descriptive plots
 
 #### Water temperature and brewing time
-
+Histogram and boxplot
 ```{r desc1_plot, message = FALSE, warning = FALSE, eval = FALSE}
 ## Descriptive plots
 temp_hist <- ggplot(data = df, aes(x = score, col = temp, fill = temp)) + 
@@ -214,7 +215,7 @@ grid.arrange(temp_hist, time_hist,
 ```
 
 #### Sensory scores
-
+Boxplot of each sensory score per treatment.
 ```{r desc2_plot, message = FALSE, warning = FALSE, eval = FALSE}
 ## Distribution of Sensory Scores
 # Create dataset from final to remove index and overall score
@@ -242,14 +243,19 @@ ggplot(data = sensory_df_tall, aes(x = value, y = variable)) +
   theme(legend.position = 'none')
 ```
 
-#### Correlation matrix
+#### Correlation 
+Spearman correlation matrix plot of sensory attributes.
 ```{r corr_plot, message = FALSE, warning = FALSE, eval = FALSE}
-## Correlation plot of sensory attributes
 # Compute correlation matrix
 sensory_corr <- cor(sensory_df[,1:5], method = 'spearman')
 corrplot(sensory_corr, method="number", mar=c(0,0,2,0), diag = F, type = 'upper',
          title = 'Spearman Correlation Matrix of Sensory Attributes')
+```
 
+#### Lineplot of temperature monitoring
+Lineplot of temperature monitoring per treatment.
+
+```{r line_plot, message = FALSE, warning = FALSE, eval = FALSE}
 ## Line plot of Temperature Monitoring per Treatment
 ggplot(monitor_df, aes(x = datetimestamp, y = celcius)) + 
   geom_line(aes(col = time:temp)) + 
@@ -287,7 +293,7 @@ shapiro.test(model$residuals)
 ks.test(x = model$residuals, y = 'rnorm')
 ad.test(model$residuals)
 
-# Test of constancy of variance on residuals (for random effects model)
+# Test of constancy of variance on residuals
 leveneTest(score ~ temp*time, data = df)
 ```
 
@@ -308,19 +314,11 @@ ggplot(data = score_means, aes(x = temp, y = Means, col = time, group = time)) +
 ```
 
 ### Post-hoc tests
+1. Scheffe's Test
+2. Tukey HSD Test
+3. Duncan's New Multiple Range Test
+4. Fisher's LSD Test
 ```{r posthoc, message = FALSE, warning = FALSE, eval = FALSE}
-par(mfrow = c(2,2))
-par(mar = c(3,5,6,1))
-
-plot(scheffe, main = "Scheffe's Test")
-plot(tukey, main = 'Tukey HSD Test')
-plot(duncan, main = "Duncan's New Multiple Range Test")
-plot(lsd, main = "Fisher's LSD Test")
-mtext("Sensory Score Mean Differences Between Water Temperature and Brewing Time", 
-      side = 3, line = -1.2, outer = T)
-
-par(mfrow = c(1,1))
-
 # Scheffe's test
 scheffe <- scheffe.test(model_aov, trt = c('temp', 'time'), console = T)
 print(scheffe)
@@ -336,3 +334,16 @@ print(duncan)
 # Least Significant difference
 lsd <- LSD.test(model_aov, trt = c('temp', 'time'), console = T)
 print(lsd)
+
+# Plot post-hoc tests groups
+par(mfrow = c(2,2))
+par(mar = c(3,5,6,1))
+
+plot(scheffe, main = "Scheffe's Test")
+plot(tukey, main = 'Tukey HSD Test')
+plot(duncan, main = "Duncan's New Multiple Range Test")
+plot(lsd, main = "Fisher's LSD Test")
+mtext("Sensory Score Mean Differences Between Water Temperature and Brewing Time", 
+      side = 3, line = -1.2, outer = T)
+
+par(mfrow = c(1,1))

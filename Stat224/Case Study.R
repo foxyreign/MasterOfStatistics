@@ -195,6 +195,7 @@ ggplot(monitor_df, aes(x = datetimestamp, y = celcius)) +
 #### Fixed effects model ####
 ## ANOVA
 model <- aov(score ~ temp*time, data = df)
+summary(model)
 Anova(model, type = "III")
 
 #### Residual analysis ####
@@ -202,9 +203,9 @@ Anova(model, type = "III")
 # 2. Normal probability plot of residuals / normality of residuals
 # 3. Standardized residuals vs Fitted values
 # 4. Spread level plot
-par(mfrow = c(1,2))
+par(mfrow = c(2,2))
 par(mar = c(5,4,4,2))
-plot(model, which=c(1,2))
+plot(model, which=c(1,2,3,5))
 mtext("Residual Analysis", side = 3, line = -1, outer = T)
 par(mfrow = c(1,1))
 
@@ -227,10 +228,26 @@ print(score_means)
 # Interaction plot
 ggplot(data = score_means, aes(x = temp, y = Means, col = time, group = time)) +
   geom_point(size = 4) + geom_line() + 
-  ggtitle('Interaction Plot of Sensory Score by Water Temperature and Brewing Temperature') + 
-  theme_bw()
+  ggtitle('Interaction Plot of Sensory Score by Water Temperature and Brewing Time') + 
+  theme_bw() + 
+  theme(legend.position = 'bottom')
 
 #### Post-hoc tests ####
+# Scheffe's test
+scheffe <- scheffe.test(model, trt = c('temp', 'time'), console = T)
+print(scheffe)
+
+# Tukey HSD
+tukey <- HSD.test(model, trt = c('temp', 'time'), console = T)
+print(tukey)
+
+# Duncan's new multiple range test
+duncan <- duncan.test(model, trt = c('temp', 'time'), console = T)
+print(duncan)
+
+# Least Significant difference
+lsd <- LSD.test(model, trt = c('temp', 'time'), console = T)
+print(lsd)
 par(mfrow = c(2,2))
 par(mar = c(3,5,6,1))
 
@@ -243,18 +260,4 @@ mtext("Sensory Score Mean Differences Between Water Temperature and Brewing Time
 
 par(mfrow = c(1,1))
 
-# Scheffe's test
-scheffe <- scheffe.test(model_aov, trt = c('temp', 'time'), console = T)
-print(scheffe)
 
-# Tukey HSD
-tukey <- HSD.test(model_aov, trt = c('temp', 'time'), console = T)
-print(tukey)
-
-# Duncan's new multiple range test
-duncan <- duncan.test(model_aov, trt = c('temp', 'time'), console = T)
-print(duncan)
-
-# Least Significant difference
-lsd <- LSD.test(model_aov, trt = c('temp', 'time'), console = T)
-print(lsd)
